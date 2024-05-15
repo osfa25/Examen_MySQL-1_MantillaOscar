@@ -229,3 +229,19 @@ WHERE fecha BETWEEN '<fecha_inicio>' AND '<fecha_fin>';
 
 SELECT COUNT(*) AS total_comisarios_asignados
 FROM evento_comisario;
+
+ -- consulta de complejos polideportivos con area total ocupada superior a un valor especifico
+
+ SELECT * FROM info_complejo WHERE area_complejo > "50";
+
+
+-- consulta de eventos con numero de participantes mayor que la media
+ 
+ SELECT * FROM eventos WHERE num_participantes > (SELECT AVG(num_participantes) FROM eventos);
+
+ -- consulta de equipamiento necesario para un evento especifico
+ 
+ SELECT equipamiento.* 
+FROM equipamiento 
+INNER JOIN evento_equipo ON equipamiento.equipamientoID = evento_equipo.equipamientoID 
+WHERE evento_equipo.id_evento = "id_evento_especifico";
