@@ -245,3 +245,37 @@ FROM evento_comisario;
 FROM equipamiento 
 INNER JOIN evento_equipo ON equipamiento.equipamientoID = evento_equipo.equipamientoID 
 WHERE evento_equipo.id_evento = "id_evento_especifico";
+
+ 
+-- consulta de eventos celebrados en complejos deportivos con jefe de organizacion especifico
+ 
+ SELECT e.nombre AS nombre_evento, c.nombre AS nombre_complejo, j.nombre AS nombre_jefe_organizacion
+FROM eventos e
+INNER JOIN evento_complejo_deportivo ecd ON e.id_evento = ecd.id_evento
+INNER JOIN complejo_deportivo cd ON ecd.id_complejo_deportivo = cd.id_complejo_deportivo
+INNER JOIN info_complejo ic ON cd.id_complejo = ic.id_complejo
+INNER JOIN jefes j ON ic.id_jefe = j.id_jefe
+WHERE j.nombre = 'Nombre del Jefe Específico';
+
+ 
+-- consulta de complejos polideportivos sin eventos celebrados
+ SELECT cp.nombre AS nombre_complejo_polideportivo
+FROM complejo_polideportivo cp
+LEFT JOIN evento_complejo_poli ecp ON cp.id_complejo_polideportivo = ecp.id_complejo_polideportivo
+WHERE ecp.id_complejo_polideportivo IS NULL;
+
+ 
+-- consulta de comisarios que actuan como jueces en todos los eventos 
+ 
+ SELECT c.nombre AS nombre_comisario
+FROM comisario c
+WHERE c.tipo = 'juez'
+AND NOT EXISTS (
+    SELECT *
+    FROM eventos e
+    WHERE NOT EXISTS (
+        SELECT *
+        FROM evento_comisario ec
+        WHERE ec.id_evento = e.id_evento AND ec.id_comisario = c.id_comisario
+    )
+);
